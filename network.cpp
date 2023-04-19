@@ -2,6 +2,7 @@
 #include <cassert>
 #include <fstream>
 #include <algorithm>
+#include <queue>
 
 // pre: none
 // post: construct default network
@@ -192,4 +193,111 @@ int Network::print_friends(std::string name)
             user->print();
     }
     return 0;
+}
+
+User* Network::get_user(std::size_t id)
+{
+    for(auto u: users_)
+        if(u->id() == id)
+            return u;
+    return NULL;
+}
+
+
+std::vector<int> Network::shortest_path(int from, int to)
+{
+    if(from == to)
+    {
+        get_user(to)->depth = 0;
+        return std::vector<int>{to};
+    }
+
+    // reset all user's predecessor to -1, marking them as unvisited
+    for(auto & u: users_)
+        u->visited = false;
+
+    std::vector<int> path;
+    std::queue<User*> q;
+
+    q.push(get_user(from));
+    q.front()->depth = 0;
+    q.front()->visited = true; // means start
+    //cout<<"DEBUG: add "<<from<<" with depth "<< 0 <<" and pred "<<-2<<endl;
+
+    while(!q.empty())
+    {
+        User* u = q.front();
+        q.pop();
+        for(auto friend_id: * u->friends())
+        {
+            User* f = get_user(friend_id);
+            if(f->id() == to)
+            {
+                //cout<<"DEBUG: found"<<endl;
+                f->depth = u->depth + 1;
+                f->predecessor = u->id();
+                User* curr = f;
+                while(curr->id() != from)
+                {
+                    //cout<<"DEBUG: "<<curr->predecessor<<endl;
+                    path.push_back(curr->id());
+                    curr = get_user(curr->predecessor);
+                }
+                path.push_back(from);
+                std::reverse(path.begin(),path.end());
+                return path;
+            }
+            if(f->visited == false)
+            {
+                f->visited = true;
+                f->depth = u->depth + 1;
+                f->predecessor = u->id();
+                //cout<<"DEBUG: add "<<f->id()<<" with depth "<< f->depth <<" and pred "<<f->predecessor<<endl;
+                q.push(f);
+            }
+        }
+    }
+    //cout<<"DEBUG: not found"<<endl;
+    return std::vector<int>();
+}
+
+std::vector<vector<int>> Network::groups()
+{
+    // initialization
+    for(auto & u: users_)
+        u->visited = false;
+    std::queue<User*> q;
+    std::vector<vector<int>> groups;
+    std::size_t component = 0;
+
+
+    for(auto & user: users_)
+    {
+        if(user->visited == false)
+        {
+            user->visited = true;
+            q.push(user);
+            groups.push_back(std::vector<int>());
+
+            while(!q.empty())
+            {
+                User* u = q.front();
+                groups[component].push_back(u->id());
+                q.pop();
+
+                for(auto friend_id: * u->friends())
+                {
+                    User* f = get_user(friend_id);
+                    if(f->visited == false)
+                    {
+                        f->visited = true;
+                        q.push(f);
+                    }
+                }
+            }
+            ++component;
+        }
+    }
+
+    return groups;
 }

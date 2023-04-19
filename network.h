@@ -9,6 +9,7 @@ using namespace std;
 class Network
 {
 public:
+
     // pre: none
     // post: construct default network
     Network();
@@ -49,7 +50,14 @@ public:
     // post: print friends info if the user exists
     int print_friends(std::string name);
 
+    User * get_user(std::size_t id);
+
+    vector<int> shortest_path(int from, int to);
+
+    vector<vector<int>> groups();
+
 private:
+
     vector<User *> users_;
 };
 

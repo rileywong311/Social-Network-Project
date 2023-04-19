@@ -8,6 +8,7 @@ using namespace std;
 class User
 {
 public:
+
     // pre: none
     // post: default user constructed
     User();
@@ -48,7 +49,12 @@ public:
     //post: print the user's info
     void print();
 
+
+    int depth, predecessor;
+    bool visited;
+
 private:
+
     std::size_t id_;
     std::string name_;
     int year_, zip_;
