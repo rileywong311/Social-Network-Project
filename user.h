@@ -50,7 +50,7 @@ public:
     void print();
 
 
-    int depth, predecessor;
+    int depth, predecessor, score;
     bool visited;
 
 private:

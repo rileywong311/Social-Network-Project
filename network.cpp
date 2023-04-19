@@ -195,6 +195,8 @@ int Network::print_friends(std::string name)
     return 0;
 }
 
+// pre:none
+// post: returns pointer to user with id if it exists, otherwise NULL
 User* Network::get_user(std::size_t id)
 {
     for(auto u: users_)
@@ -203,7 +205,8 @@ User* Network::get_user(std::size_t id)
     return NULL;
 }
 
-
+// pre: none
+// post: returns a vector of id's of the path to "from" and "to" if it exists, otherwise an empty vector
 std::vector<int> Network::shortest_path(int from, int to)
 {
     if(from == to)
@@ -261,6 +264,8 @@ std::vector<int> Network::shortest_path(int from, int to)
     return std::vector<int>();
 }
 
+// pre: none
+// post: returns a vector of vectors storing id's, each vector of id's is a disconnected group
 std::vector<vector<int>> Network::groups()
 {
     // initialization
@@ -300,4 +305,70 @@ std::vector<vector<int>> Network::groups()
     }
 
     return groups;
+}
+
+// candidancy = distance of 2
+// score = number of shared friends
+vector<int> Network::suggest_friends(int who, int& score)
+{
+    score = -1;
+
+    for(auto & u: users_)
+    {
+        u->visited = false;
+        u->score = 0;
+    }
+
+    std::vector<User *> all_depth_2;
+    std::queue<User*> q;
+
+    q.push(get_user(who));
+    q.front()->depth = 0;
+    q.front()->visited = true;
+
+    // perform bfs, but it will stop at users of depth 2
+    while(!q.empty())
+    {
+        User* u = q.front();
+        q.pop();
+        for(auto friend_id: * u->friends())
+        {
+            User* f = get_user(friend_id);
+            if(f->visited == false)
+            {
+                f->visited = true;
+                f->depth = u->depth + 1;
+                if(f->depth == 2)
+                {
+                    all_depth_2.push_back(f);
+                    f->score = 1;
+                    if(score == -1)
+                        score = 1;
+                }
+                else
+                    q.push(f);
+            }
+            if(f->visited == true && f->depth == 2)
+            {
+                f->score += 1;
+                if(f->score > score)
+                    score = f->score;
+            }
+        }
+    }
+
+    // if no suggestions exists (score will never have been set, thus it stayed -1)
+    if(score == -1)
+    {
+        return std::vector<int>();
+    }
+
+    // cull suggestions to those only of the highest score
+    std::vector<int> suggested;
+    for(auto e: all_depth_2)
+    {
+        if(e->score == score)
+            suggested.push_back(e->id());
+    }
+    return suggested;
 }

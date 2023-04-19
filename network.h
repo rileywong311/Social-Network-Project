@@ -50,11 +50,19 @@ public:
     // post: print friends info if the user exists
     int print_friends(std::string name);
 
+    // pre:none
+    // post: returns pointer to user with id if it exists, otherwise NULL
     User * get_user(std::size_t id);
 
+    // pre: none
+    // post: returns a vector of id's of the path to "from" and "to" if it exists, otherwise an empty vector
     vector<int> shortest_path(int from, int to);
 
+    // pre: none
+    // post: returns a vector of vectors storing id's, each vector of id's is a disconnected group
     vector<vector<int>> groups();
+
+    vector<int> suggest_friends(int who, int & score);
 
 private:
 
