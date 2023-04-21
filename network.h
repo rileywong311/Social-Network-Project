@@ -62,7 +62,14 @@ public:
     // post: returns a vector of vectors storing id's, each vector of id's is a disconnected group
     vector<vector<int>> groups();
 
+    // pre: none
+    // post: return all id's with the highest mutual friendship
     vector<int> suggest_friends(int who, int & score);
+
+    // pre: none
+    // post: run a single depth first search check, if a user at the distance is found then return a
+    //       vector of the path to that and also set "to" to the id of them
+    vector<int> distance_user(int from, int& to, int distance);
 
 private:
 

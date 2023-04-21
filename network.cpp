@@ -3,6 +3,7 @@
 #include <fstream>
 #include <algorithm>
 #include <queue>
+#include <stack>
 
 // pre: none
 // post: construct default network
@@ -307,8 +308,8 @@ std::vector<vector<int>> Network::groups()
     return groups;
 }
 
-// candidancy = distance of 2
-// score = number of shared friends
+// pre: none
+// post: return all id's with the highest mutual friendship
 vector<int> Network::suggest_friends(int who, int& score)
 {
     score = -1;
@@ -316,11 +317,13 @@ vector<int> Network::suggest_friends(int who, int& score)
     for(auto & u: users_)
     {
         u->visited = false;
-        u->score = 0;
     }
 
     std::vector<User *> all_depth_2;
     std::queue<User*> q;
+
+    if(get_user(who) == NULL)
+        return std::vector<int>();
 
     q.push(get_user(who));
     q.front()->depth = 0;
@@ -348,7 +351,7 @@ vector<int> Network::suggest_friends(int who, int& score)
                 else
                     q.push(f);
             }
-            if(f->visited == true && f->depth == 2)
+            else if(f->visited == true && f->depth == 2)
             {
                 f->score += 1;
                 if(f->score > score)
@@ -372,3 +375,83 @@ vector<int> Network::suggest_friends(int who, int& score)
     }
     return suggested;
 }
+
+
+// pre: none
+// post: run a single depth first search check, if a user at the distance is found then return a
+//       vector of the path to that and also set "to" to the id of them
+vector<int> Network::distance_user(int from, int& to, int distance)
+{
+    to = -1;
+
+    if(distance == 0 || distance == 1)
+        return vector<int>();
+
+    for(auto & u: users_)
+    {
+        u->visited = false;
+        u->depth = 0;
+    }
+
+    std::stack<User *> s;
+    User * root = get_user(from);
+
+    if(root == NULL)
+        return std::vector<int>();
+
+    root->depth = 0;
+    root->visited = true;
+    s.push(root);
+    // cout<<"ADD: "<<root->name()<<" added to stack with depth "<<root->depth<<endl;
+
+    while(!s.empty())
+    {
+        User* u = s.top();
+        s.pop();
+        for(auto friend_id: * u->friends())
+        {
+            User* f = get_user(friend_id);
+            if(!f->visited)
+            {
+                f->depth = u->depth + 1;
+                f->predecessor = u->id();
+                // cout<<"ADD: "<<f->name()<<" added to stack with depth "<<f->depth<<endl;
+                if(f->depth == distance && std::find(root->friends()->begin(), root->friends()->end(), f->id()) == root->friends()->end())
+                {
+                    // if it matches the distance and is not already a friend
+                    to = f->id();
+                    // cout<<"DEBUG: found a match with name "<<get_user(to)->name()<<endl;
+                    s = std::stack<User *>();
+                    break;
+                }
+                else if(f->depth != distance)
+                {
+                    // will not stop adding to stack when depth is the distance
+                    f->visited = true;
+                    s.push(f);
+                }
+            }
+        }
+    }
+
+    // cout<<"DEBUG: stack finished"<<endl;
+    // if no match found
+    if(to == -1)
+        return vector<int>();
+
+    // else create path
+    std::vector<int> path;
+    User* curr = get_user(to);
+    while(curr->id() != from)
+    {
+        path.push_back(curr->id());
+        curr = get_user(curr->predecessor);
+    }
+    path.push_back(from);
+    std::reverse(path.begin(), path.end());
+    return path;
+}
+
+
+
+

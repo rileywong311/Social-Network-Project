@@ -46,6 +46,20 @@ void test()
             cout<<n.get_user(e)->name()<<" with score "<<s<<endl;
         }
     }
+
+    cout<<"---SUGGESTION---"<<endl;
+    int to;
+    std::vector<int> distance = n.distance_user(5, to, 5);
+    if(to == -1)
+        cout<<"No match was calculated"<<endl;
+    else
+    {
+        cout<<"Found a match! "<<n.get_user(to)->name()<<": ";
+        for(std::size_t j = 0; j < distance.size() - 1; ++j)
+            cout<<n.get_user(distance[j])->name()<<" -> ";
+        cout<<n.get_user(distance[distance.size()-1])->name()<<endl;
+        cout<<endl;
+    }
 }
 
 
@@ -62,7 +76,7 @@ int main()
     char * file_name;
     User * u;
 
-    while(choice != 10)
+    while(choice != 11)
     {
         cout<<"\nPick a command:\n"
             <<"1) Add a user [<name> <birth> <zip>] \n"
@@ -73,8 +87,9 @@ int main()
             <<"6) Write to file [<file_name.txt>] \n"
             <<"7) Shortest Path [<name> <name>] \n"
             <<"8) Disjointed Sets [None] \n"
-            <<"9) Get suggested friends [name] \n"
-            <<"10) End [None] \n";
+            <<"9) Get suggested friends [<name>] \n"
+            <<"10) Suggest from distance [<name> <distance>] \n"
+            <<"11) End [None] \n";
 
         cin>>choice;
 
@@ -181,10 +196,27 @@ int main()
                 }
             }
         }
+        else if(choice == 10)
+        {
+            int to, distance;
+            cin>>first_name>>last_name>>distance;
+            name1 = first_name + " " + last_name;
+            std::vector<int> distance_path = net.distance_user(net.get_id(name1), to, distance);
+            if(to == -1)
+                cout<<"No match was calculated"<<endl;
+            else
+            {
+                cout<<"Found a match! "<<net.get_user(to)->name()<<": ";
+                for(std::size_t i = 0; i < distance_path.size() - 1; ++i)
+                    cout<<net.get_user(distance_path[i])->name()<<" -> ";
+                cout<<net.get_user(distance_path[distance_path.size()-1])->name()<<endl;
+                cout<<endl;
+            }
+        }
         else
         {
             cout<<"Program end."<<endl;
-            choice = 10;
+            choice = 11;
             break;
         }
     }
