@@ -1,2 +1,9 @@
 SocialNetwork.pro
 SocialNetwork.pro.user
+
+social_network.o
+user.o
+network.o
+
+output.exe
+output.exe.stackdump
