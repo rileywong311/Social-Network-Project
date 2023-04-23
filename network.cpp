@@ -84,10 +84,10 @@ int Network::get_id(std::string name)
 // post: initialize network to file
 int Network::read_friends(char* fname)
 {
-    ifstream is;
+    std::ifstream is;
     is.open(fname);
     if(is.fail()){
-        cout<<"Input file opening failed!"<<endl;
+        std::cout<<"Input file opening failed!"<<std::endl;
         return -1;
     }
 
@@ -131,26 +131,26 @@ int Network::read_friends(char* fname)
 // post: output the network data to file
 int Network::write_friends(char* fname)
 {
-    ofstream os;
+    std::ofstream os;
     os.open(fname);
     if(os.fail()){
-        cout<<"Output file opening failed!"<<endl;
+        std::cout<<"Output file opening failed!"<<std::endl;
         return -1;
     }
 
-    os<<users_.size()<<endl;
+    os<<users_.size()<<std::endl;
     for(auto e: users_)
     {
-        os<<e->id()<<endl;
-        os<<"\t"<<e->name()<<endl;
-        os<<"\t"<<e->year()<<endl;
-        os<<"\t"<<e->zip()<<endl;
+        os<<e->id()<<std::endl;
+        os<<"\t"<<e->name()<<std::endl;
+        os<<"\t"<<e->year()<<std::endl;
+        os<<"\t"<<e->zip()<<std::endl;
         os<<"\t";
         for(auto f: *(e->friends()))
         {
             os<<f<<" ";
         }
-        os<<endl;
+        os<<std::endl;
     }
 
     os.close();
@@ -267,13 +267,13 @@ std::vector<int> Network::shortest_path(int from, int to)
 
 // pre: none
 // post: returns a vector of vectors storing id's, each vector of id's is a disconnected group
-std::vector<vector<int>> Network::groups()
+std::vector<std::vector<int>> Network::groups()
 {
     // initialization
     for(auto & u: users_)
         u->visited = false;
     std::queue<User*> q;
-    std::vector<vector<int>> groups;
+    std::vector<std::vector<int>> groups;
     std::size_t component = 0;
 
 
@@ -310,7 +310,7 @@ std::vector<vector<int>> Network::groups()
 
 // pre: none
 // post: return all id's with the highest mutual friendship
-vector<int> Network::suggest_friends(int who, int& score)
+std::vector<int> Network::suggest_friends(int who, int& score)
 {
     score = -1;
 
@@ -380,12 +380,12 @@ vector<int> Network::suggest_friends(int who, int& score)
 // pre: none
 // post: run a single depth first search check, if a user at the distance is found then return a
 //       vector of the path to that and also set "to" to the id of them
-vector<int> Network::distance_user(int from, int& to, int distance)
+std::vector<int> Network::distance_user(int from, int& to, int distance)
 {
     to = -1;
 
     if(distance == 0 || distance == 1)
-        return vector<int>();
+        return std::vector<int>();
 
     for(auto & u: users_)
     {
@@ -437,7 +437,7 @@ vector<int> Network::distance_user(int from, int& to, int distance)
     // cout<<"DEBUG: stack finished"<<endl;
     // if no match found
     if(to == -1)
-        return vector<int>();
+        return std::vector<int>();
 
     // else create path
     std::vector<int> path;

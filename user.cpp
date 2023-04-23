@@ -41,7 +41,7 @@ void User::delete_friend(int id)
 //post: print the user's info
 void User::print()
 {
-    cout<<id_<<' '<<name_<<' '<<year_<<' '<<zip_<<endl;
+    std::cout<<id_<<' '<<name_<<' '<<year_<<' '<<zip_<<std::endl;
 //    cout<<"ID: "<<id_<<endl;
 //    cout<<"   Name: "<<name_<<endl;
 //    cout<<"   Birth: "<<year_<<endl;

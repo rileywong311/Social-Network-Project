@@ -10,9 +10,9 @@ void test()
 
     n.read_friends("C://cygwin64//home//yelir//SocialNetwork//SocialNetwork//SN-2.txt");
 
-//    cout<<"---PRINT USERS---"<<endl;
-//    n.print();
-//    cout<<endl;
+    cout<<"---PRINT USERS---"<<endl;
+    n.print();
+    cout<<endl;
 
 //    cout<<"---TEST SHORTEST PATH---"<<endl;
 //    int from(0), to(123);
