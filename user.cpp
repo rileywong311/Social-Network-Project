@@ -5,7 +5,8 @@
 // pre: none
 // post: default user constructed
 User::User(){
-    friends_ = std::vector<size_t>();
+    friends_ = std::vector<std::size_t>();
+    messages_ = std::vector<Post *>();
 }
 
 // pre: none
@@ -17,6 +18,7 @@ User::User(std::size_t id, std::string name, int year, int zip, std::vector<std:
     year_ = year;
     zip_ = zip;
     friends_ = friends;
+    messages_ = std::vector<Post *>();
 }
 
 // pre: none
@@ -42,17 +44,62 @@ void User::delete_friend(int id)
 void User::print()
 {
     std::cout<<id_<<' '<<name_<<' '<<year_<<' '<<zip_<<std::endl;
-//    cout<<"ID: "<<id_<<endl;
-//    cout<<"   Name: "<<name_<<endl;
-//    cout<<"   Birth: "<<year_<<endl;
-//    cout<<"   Zip: "<<zip_<<endl;
-//    cout<<"   Friends: ";
-//    if(friends_.empty())
-//        cout<<"None"<<endl;
-//    else
-//    {
-//        for(auto e: friends_)
-//            cout<<e<<" ";
-//        cout<<endl;
-//    }
+}
+
+void User::addPost(Post * post)
+{
+    messages_.push_back(post);
+}
+
+std::string User::displayPosts(int howmany)
+{
+    std::string result(""), new_line;
+    int counter(0);
+    for(auto & post: messages_)
+    {
+        new_line = post->displayPost();
+        if(std::find(new_line.begin(), new_line.end(), "$") == new_line.end())
+        {
+            result += new_line + "\n\n";
+            ++counter;
+            if(counter == howmany)
+                break;
+        }
+    }
+    return result;
+}
+
+// I assume "name" is name of "who"
+std::string User::displayDMs(int who, std::string name, int howmany)
+{
+    std::string result(""), new_line;
+    int counter(0), recipient_start;
+    for(auto & post: messages_)
+    {
+        new_line = post->displayPost();
+        if(*new_line.end() == '$')
+        {
+            recipient_start = new_line.size() - 2;
+            while(new_line[recipient_start - 1] != '$')
+                --recipient_start;
+            // assume all DM's in messages_ are authored by this User?
+            if(std::stoi(new_line.substr(recipient_start, (new_line.size() - 2) - recipient_start)) == who && post->author() == id_)
+            {
+                result += "From: " + name_ + "\n";
+                result += new_line.substr(0, recipient_start - 1) + "\n\n";
+                ++counter;
+                if(counter == howmany)
+                    break;
+            }
+            else if(post->author() == who && std::stoi(new_line.substr(recipient_start, (new_line.size() - 2) - recipient_start)) == id_)
+            {
+                result += "From: " + name + "\n";
+                result += new_line.substr(0, recipient_start - 1) + "\n\n";
+                ++counter;
+                if(counter == howmany)
+                    break;
+            }
+        }
+    }
+    return result;
 }
