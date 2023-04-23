@@ -3,7 +3,7 @@
 
 #include "post.h"
 
-class DirectMessage : protected Post
+class DirectMessage : public Post
 {
 public:
     // pre: none

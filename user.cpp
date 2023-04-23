@@ -69,7 +69,7 @@ std::string User::displayPosts(int howmany)
     return result;
 }
 
-// I assume "name" is name of "who"
+
 std::string User::displayDMs(int who, std::string name, int howmany)
 {
     std::string result(""), new_line;
@@ -83,17 +83,10 @@ std::string User::displayDMs(int who, std::string name, int howmany)
             while(new_line[recipient_start - 1] != '$')
                 --recipient_start;
             // assume all DM's in messages_ are authored by this User?
-            if(std::stoi(new_line.substr(recipient_start, (new_line.size() - 2) - recipient_start)) == who && post->author() == id_)
+            // I assume "name" is name of "who"
+            if(std::stoi(new_line.substr(recipient_start, (new_line.size() - 2) - recipient_start)) == who)
             {
                 result += "From: " + name_ + "\n";
-                result += new_line.substr(0, recipient_start - 1) + "\n\n";
-                ++counter;
-                if(counter == howmany)
-                    break;
-            }
-            else if(post->author() == who && std::stoi(new_line.substr(recipient_start, (new_line.size() - 2) - recipient_start)) == id_)
-            {
-                result += "From: " + name + "\n";
                 result += new_line.substr(0, recipient_start - 1) + "\n\n";
                 ++counter;
                 if(counter == howmany)

@@ -33,40 +33,41 @@ void test()
 //        cout<<endl;
 //    }
 
-    cout<<"---SUGGESTION---"<<endl;
-    int s;
-    std::vector<int> j = n.suggest_friends(12, s);
-    if(s == -1)
-        cout<<"None"<<endl;
-    else
-    {
-        cout<<"The suggested friend(s) is/are:"<<endl;
-        for(auto e: j)
-        {
-            cout<<n.get_user(e)->name()<<" with score "<<s<<endl;
-        }
-    }
+//    cout<<"---SUGGESTION---"<<endl;
+//    int s;
+//    std::vector<int> j = n.suggest_friends(12, s);
+//    if(s == -1)
+//        cout<<"None"<<endl;
+//    else
+//    {
+//        cout<<"The suggested friend(s) is/are:"<<endl;
+//        for(auto e: j)
+//        {
+//            cout<<n.get_user(e)->name()<<" with score "<<s<<endl;
+//        }
+//    }
 
-    cout<<"---SUGGESTION---"<<endl;
-    int to;
-    std::vector<int> distance = n.distance_user(5, to, 5);
-    if(to == -1)
-        cout<<"No match was calculated"<<endl;
-    else
-    {
-        cout<<"Found a match! "<<n.get_user(to)->name()<<": ";
-        for(std::size_t j = 0; j < distance.size() - 1; ++j)
-            cout<<n.get_user(distance[j])->name()<<" -> ";
-        cout<<n.get_user(distance[distance.size()-1])->name()<<endl;
-        cout<<endl;
-    }
+//    cout<<"---SUGGESTION---"<<endl;
+//    int to;
+//    std::vector<int> distance = n.distance_user(5, to, 5);
+//    if(to == -1)
+//        cout<<"No match was calculated"<<endl;
+//    else
+//    {
+//        cout<<"Found a match! "<<n.get_user(to)->name()<<": ";
+//        for(std::size_t j = 0; j < distance.size() - 1; ++j)
+//            cout<<n.get_user(distance[j])->name()<<" -> ";
+//        cout<<n.get_user(distance[distance.size()-1])->name()<<endl;
+//        cout<<endl;
+//    }
+
 }
 
 
 int main()
 {
-//    test();
-//    return 0;
+    test();
+    return 0;
 
     std::size_t id_counter = 0;
     Network net;

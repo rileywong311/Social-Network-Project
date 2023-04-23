@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <queue>
 #include <stack>
+#include "post.h"
+#include "directmessage.h"
 
 // pre: none
 // post: construct default network
@@ -450,6 +452,61 @@ std::vector<int> Network::distance_user(int from, int& to, int distance)
     path.push_back(from);
     std::reverse(path.begin(), path.end());
     return path;
+}
+
+
+void Network::displayPosts(std::string name, int howmany)
+{
+    for(auto & u: users_)
+        if(u->name() == name)
+        {
+            u->displayPosts(howmany);
+            break;
+        }
+}
+
+void Network::displayDM(std::string from, std::string to, int howmany)
+{
+    for(auto & u: users_)
+        if(u->name() == from)
+        {
+            int author_id = get_id(to);
+            if(author_id == NULL)
+                return;
+            u->displayDMs(author_id, to, howmany);
+            break;
+        }
+
+}
+
+void Network::addPost(std::string who, std::string message, int likes, int id)
+{
+    int author_id = get_id(who);
+    if(author_id == NULL)
+        return;
+    Post* p = new Post(id, author_id, likes, message);
+    for(auto & u: users_)
+        if(u->name() == who)
+        {
+            u->addPost(p);
+            break;
+        }
+
+}
+
+void Network::addDM(std::string who, std::string message, int likes, int id, std::string recipient)
+{
+    int author_id = get_id(who);
+    int recipient_id = get_id(recipient);
+    if(author_id == NULL || recipient_id == NULL)
+        return;
+    DirectMessage* d = new DirectMessage(id, author_id, likes, message, recipient_id);
+    for(auto & u: users_)
+        if(u->name() == who)
+        {
+            u->addPost(d);
+            break;
+        }
 }
 
 
