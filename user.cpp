@@ -57,9 +57,9 @@ std::string User::displayPosts(int howmany)
         return "";
     std::string result(""), new_line;
     int counter(0);
-    for(auto & post: messages_)
+    for(int i = messages_.size() - 1; i >= 0; --i)
     {
-        new_line = post->displayPost();
+        new_line = messages_[i]->displayPost();
         if(std::find(new_line.begin(), new_line.end(), '$') == new_line.end())
         {
             result += new_line + "\n\n";
@@ -79,9 +79,9 @@ std::string User::displayDMs(int who, std::string name, int howmany)
         return "";
     std::string result(""), new_line;
     int counter(0), recipient_start;
-    for(auto & post: messages_)
+    for(int i = messages_.size() - 1; i >= 0; --i)
     {
-        new_line = post->displayPost();
+        new_line = messages_[i]->displayPost();
         // std::cout<<"DEBUG: checking this post \n"<< new_line << std::endl;
         if(*(new_line.end() - 1) == '$')
         {

@@ -13,56 +13,56 @@ void test()
 
     n.read_friends("C://cygwin64//home//yelir//SocialNetwork//SocialNetwork//SN-2.txt");
 
-//    cout<<"---PRINT USERS---"<<endl;
-//    n.print();
-//    cout<<endl;
+    cout<<"---PRINT USERS---"<<endl;
+    n.print();
+    cout<<endl;
 
-//    cout<<"---TEST SHORTEST PATH---"<<endl;
-//    int from(0), to(123);
-//    std::vector<int> i = n.shortest_path(from, to);
-//    cout<<"Distance: "<<n.get_user(i[i.size()-1])->depth<<endl;
-//    for(std::size_t j = 0; j < i.size() - 1; ++j)
-//        cout<<n.get_user(i[j])->name()<<" -> ";
-//    cout<<n.get_user(i[i.size()-1])->name()<<endl;
+    cout<<"---TEST SHORTEST PATH---"<<endl;
+    int from(0), to(123);
+    std::vector<int> i = n.shortest_path(from, to);
+    cout<<"Distance: "<<n.get_user(i[i.size()-1])->depth<<endl;
+    for(std::size_t j = 0; j < i.size() - 1; ++j)
+        cout<<n.get_user(i[j])->name()<<" -> ";
+    cout<<n.get_user(i[i.size()-1])->name()<<endl;
 
 
-//    cout<<"\n---TEST DISJOINT SETS---"<<endl;
-//    std::vector<vector<int>> result = n.groups();
-//    for(std::size_t i = 0; i < result.size(); ++i)
-//    {
-//        cout<<"Set "<<i+1<<" => ";
-//        for(auto j: result[i])
-//            cout<<n.get_user(j)->name()<<", ";
-//        cout<<endl;
-//    }
+    cout<<"\n---TEST DISJOINT SETS---"<<endl;
+    std::vector<vector<int>> result = n.groups();
+    for(std::size_t i = 0; i < result.size(); ++i)
+    {
+        cout<<"Set "<<i+1<<" => ";
+        for(auto j: result[i])
+            cout<<n.get_user(j)->name()<<", ";
+        cout<<endl;
+    }
 
-//    cout<<"---SUGGESTION---"<<endl;
-//    int s;
-//    std::vector<int> j = n.suggest_friends(12, s);
-//    if(s == -1)
-//        cout<<"None"<<endl;
-//    else
-//    {
-//        cout<<"The suggested friend(s) is/are:"<<endl;
-//        for(auto e: j)
-//        {
-//            cout<<n.get_user(e)->name()<<" with score "<<s<<endl;
-//        }
-//    }
+    cout<<"---SUGGESTION---"<<endl;
+    int s;
+    std::vector<int> j = n.suggest_friends(12, s);
+    if(s == -1)
+        cout<<"None"<<endl;
+    else
+    {
+        cout<<"The suggested friend(s) is/are:"<<endl;
+        for(auto e: j)
+        {
+            cout<<n.get_user(e)->name()<<" with score "<<s<<endl;
+        }
+    }
 
-//    cout<<"---SUGGESTION---"<<endl;
-//    int to;
-//    std::vector<int> distance = n.distance_user(5, to, 5);
-//    if(to == -1)
-//        cout<<"No match was calculated"<<endl;
-//    else
-//    {
-//        cout<<"Found a match! "<<n.get_user(to)->name()<<": ";
-//        for(std::size_t j = 0; j < distance.size() - 1; ++j)
-//            cout<<n.get_user(distance[j])->name()<<" -> ";
-//        cout<<n.get_user(distance[distance.size()-1])->name()<<endl;
-//        cout<<endl;
-//    }
+    cout<<"---SUGGESTION---"<<endl;
+    int to2;
+    std::vector<int> distance = n.distance_user(5, to2, 5);
+    if(to == -1)
+        cout<<"No match was calculated"<<endl;
+    else
+    {
+        cout<<"Found a match! "<<n.get_user(to)->name()<<": ";
+        for(std::size_t j = 0; j < distance.size() - 1; ++j)
+            cout<<n.get_user(distance[j])->name()<<" -> ";
+        cout<<n.get_user(distance[distance.size()-1])->name()<<endl;
+        cout<<endl;
+    }
 
     cout<<"---CREATE POST---"<<endl;
     Post p(0, 1, 53, "Test post");
@@ -127,6 +127,8 @@ int main()
 
     std::size_t id_counter = 0;
     Network net;
+
+    net.read_friends("C://cygwin64//home//yelir//SocialNetwork//SocialNetwork//SN-2.txt");
 
     int choice(0), birth, zip, result, id1, id2;
     std::string name1, name2, first_name, last_name, file_name_string;
