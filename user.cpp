@@ -53,12 +53,14 @@ void User::addPost(Post * post)
 
 std::string User::displayPosts(int howmany)
 {
+    if(howmany == 0)
+        return "";
     std::string result(""), new_line;
     int counter(0);
     for(auto & post: messages_)
     {
         new_line = post->displayPost();
-        if(std::find(new_line.begin(), new_line.end(), "$") == new_line.end())
+        if(std::find(new_line.begin(), new_line.end(), '$') == new_line.end())
         {
             result += new_line + "\n\n";
             ++counter;
@@ -72,19 +74,27 @@ std::string User::displayPosts(int howmany)
 
 std::string User::displayDMs(int who, std::string name, int howmany)
 {
+    // std::cout<<"DEBUG: displaying DMs"<<std::endl;
+    if(howmany == 0)
+        return "";
     std::string result(""), new_line;
     int counter(0), recipient_start;
     for(auto & post: messages_)
     {
         new_line = post->displayPost();
-        if(*new_line.end() == '$')
+        // std::cout<<"DEBUG: checking this post \n"<< new_line << std::endl;
+        if(*(new_line.end() - 1) == '$')
         {
             recipient_start = new_line.size() - 2;
             while(new_line[recipient_start - 1] != '$')
+            {
                 --recipient_start;
+            }
             // assume all DM's in messages_ are authored by this User?
             // I assume "name" is name of "who"
-            if(std::stoi(new_line.substr(recipient_start, (new_line.size() - 2) - recipient_start)) == who)
+            // std::cout<<"DEBUG: recipient is " << std::stoi(new_line.substr(recipient_start, (new_line.size() - 1) - recipient_start)) << std::endl;
+            bool recipient_is_who = (std::stoi(new_line.substr(recipient_start, (new_line.size() - 1) - recipient_start)) == who);
+            if(recipient_is_who)
             {
                 result += "From: " + name_ + "\n";
                 result += new_line.substr(0, recipient_start - 1) + "\n\n";
@@ -92,6 +102,7 @@ std::string User::displayDMs(int who, std::string name, int howmany)
                 if(counter == howmany)
                     break;
             }
+
         }
     }
     return result;

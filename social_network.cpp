@@ -4,15 +4,18 @@
 #include <cassert>
 using namespace std;
 
+#include "post.h"
+#include "directmessage.h"
+
 void test()
 {
     Network n;
 
     n.read_friends("C://cygwin64//home//yelir//SocialNetwork//SocialNetwork//SN-2.txt");
 
-    cout<<"---PRINT USERS---"<<endl;
-    n.print();
-    cout<<endl;
+//    cout<<"---PRINT USERS---"<<endl;
+//    n.print();
+//    cout<<endl;
 
 //    cout<<"---TEST SHORTEST PATH---"<<endl;
 //    int from(0), to(123);
@@ -60,6 +63,36 @@ void test()
 //        cout<<n.get_user(distance[distance.size()-1])->name()<<endl;
 //        cout<<endl;
 //    }
+
+    cout<<"---CREATE POST---"<<endl;
+    Post p(0, 1, 53, "Test post");
+    cout<<"Create post with id: "<<p.id()<<" author: "<<p.author()<<" likes: "<<p.likes()<<" and message: \""<<p.message()<<"\""<<endl;
+
+
+    cout<<"---CREATE DIRECT MESSAGE---"<<endl;
+    DirectMessage d(1, 2, 36, "Test DM", 14);
+    cout<<"Create DM with id: "<<d.id()<<" author: "<<d.author()<<" likes: "<<d.likes()<<" message: \""<<d.message()<<"\""<<" and recipient: "<<d.recipient()<<endl;
+
+
+    cout<<"---ADD POST---"<<endl;
+
+    int post_counter(-1);
+
+    Post p1(++post_counter, 1, 14, "First post");
+    Post p2(++post_counter, 1, 15, "Second post");
+    Post p3(++post_counter, 1, 16, "Third post");
+
+    DirectMessage d1(++post_counter, 1, 17, "First DM", 53);
+
+    Post* posts[] = {&d1, &p1, &p2, &p3};
+    for(auto & p: posts)
+        n.get_user(p->author())->addPost(p);
+
+    cout << "Display posts:\n"<< n.get_user(p1.author())->displayPosts(2) << endl;
+
+    cout << "Display DMs:\n" << n.get_user(d1.author())->displayDMs(d1.recipient(), n.get_user(d1.recipient())->name(), 3) << endl;
+
+
 
 }
 
