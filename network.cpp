@@ -455,28 +455,27 @@ std::vector<int> Network::distance_user(int from, int& to, int distance)
 }
 
 
-void Network::displayPosts(std::string name, int howmany)
+std::string Network::displayPosts(std::string name, int howmany)
 {
     for(auto & u: users_)
         if(u->name() == name)
         {
-            u->displayPosts(howmany);
-            break;
+            return u->displayPosts(howmany);
         }
+    return "";
 }
 
-void Network::displayDM(std::string from, std::string to, int howmany)
+std::string Network::displayDM(std::string from, std::string to, int howmany)
 {
     for(auto & u: users_)
         if(u->name() == from)
         {
             int author_id = get_id(to);
             if(author_id == NULL)
-                return;
-            u->displayDMs(author_id, to, howmany);
-            break;
+                return "";
+            return u->displayDMs(author_id, to, howmany);
         }
-
+    return "";
 }
 
 void Network::addPost(std::string who, std::string message, int likes, int id)
@@ -491,7 +490,6 @@ void Network::addPost(std::string who, std::string message, int likes, int id)
             u->addPost(p);
             break;
         }
-
 }
 
 void Network::addDM(std::string who, std::string message, int likes, int id, std::string recipient)

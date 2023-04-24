@@ -74,25 +74,48 @@ void test()
     cout<<"Create DM with id: "<<d.id()<<" author: "<<d.author()<<" likes: "<<d.likes()<<" message: \""<<d.message()<<"\""<<" and recipient: "<<d.recipient()<<endl;
 
 
-    cout<<"---ADD POST---"<<endl;
-
+    cout<<"---ADD POSTS TO USER---"<<endl;
     int post_counter(-1);
 
     Post p1(++post_counter, 1, 14, "First post");
     Post p2(++post_counter, 1, 15, "Second post");
     Post p3(++post_counter, 1, 16, "Third post");
-
     DirectMessage d1(++post_counter, 1, 17, "First DM", 53);
+    Post p4(++post_counter, 1, 17, "Fourth post");
 
-    Post* posts[] = {&d1, &p1, &p2, &p3};
+    Post* posts[] = {&p1, &p2, &p3, &d1, &p4};
     for(auto & p: posts)
         n.get_user(p->author())->addPost(p);
 
-    cout << "Display posts:\n"<< n.get_user(p1.author())->displayPosts(2) << endl;
+    cout<<"---DISPLAY POSTS FROM USER---"<<endl;
 
-    cout << "Display DMs:\n" << n.get_user(d1.author())->displayDMs(d1.recipient(), n.get_user(d1.recipient())->name(), 3) << endl;
+    cout << "Display posts from user:\n"<< n.get_user(p1.author())->displayPosts(3) << endl;
+
+    cout << "Display DMs from user:\n" << n.get_user(d1.author())->displayDMs(d1.recipient(), n.get_user(d1.recipient())->name(), 3) << endl;
+
+    cout<<"---DISPLAY POSTS FROM NET---"<<endl;
+
+    cout << "Display posts from net:\n" << n.displayPosts(n.get_user(p1.author())->name(), 2) << endl;
+
+    cout << "Display DMs from net:\n" << n.displayDM(n.get_user(d1.author())->name(), n.get_user(d1.recipient())->name(), 2)<< endl;
+
+    cout << "Display posts from net (not exist):\n" << n.displayPosts(n.get_user(54)->name(), 2) << endl;
+
+    cout << "Display DMs from net (not exist):\n" << n.displayDM(n.get_user(d1.author())->name(), n.get_user(101)->name(), 2)<< endl;
+
+    cout << "Display DMs from net (not exist):\n" << n.displayDM(n.get_user(54)->name(), n.get_user(63)->name(), 2)<< endl;
 
 
+    cout<<"---ADD POSTS TO NET---"<<endl;
+
+    n.addPost(n.get_user(2)->name(), "2nd First Post", 18, ++post_counter);
+    n.addPost(n.get_user(2)->name(), "2nd Second Post", 19, ++post_counter);
+    n.addDM(n.get_user(2)->name(), "2nd First DM", 20, ++post_counter, n.get_user(3)->name());
+    n.addDM(n.get_user(2)->name(), "2nd Second DM", 21, ++post_counter, n.get_user(3)->name());
+    n.addPost(n.get_user(2)->name(), "2nd Third Post", 12, ++post_counter);
+
+    cout << "Display posts from net:\n" << n.displayPosts(n.get_user(2)->name(), 2) << endl;
+    cout << "Display DMs from net:\n" << n.displayDM(n.get_user(2)->name(), n.get_user(3)->name(), 2)<< endl;
 
 }
 
