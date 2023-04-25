@@ -504,17 +504,16 @@ void Network::addDM(std::string who, std::string message, int likes, int id, std
         return;
     }
     for(auto & u: users_)
-        if(u->name() == who)
+        if(u->id() == author_id || u->id() == recipient_id)
         {
             u->addPost(new DirectMessage(id, author_id, likes, message, recipient_id));
             // std::cout<<"DEBUG: "<< u->displayDMs(recipient_id, "filler", 1) <<std::endl;
-            break;
         }
 }
 
 int Network::read_posts(char* fname)
 {
-    // std::cout<<"DEBUG: start"<<std::endl;
+//    std::cout<<"DEBUG: start"<<std::endl;
     std::ifstream is;
     is.open(fname);
     if(is.fail()){
@@ -542,10 +541,10 @@ int Network::read_posts(char* fname)
 //        std::cout<<"DEBUG: 3 "<<likes<<std::endl;
 //        std::cout<<"DEBUG: 4 "<<is_DM<<std::endl;
 
-
-        if(is_DM.size() <= 1 || is_DM.substr(1) != "DM")
+        // std::cout<<"DEBUG: "<<is_DM[is_DM.size()-3]<<is_DM[is_DM.size()-2]<<std::endl;
+        if(is_DM.size() <= 2 || !(is_DM[is_DM.size()-3] == 'D' && is_DM[is_DM.size()-2] == 'M')) // cygwin has a invisible character at the end of strings, but QT does not
         {
-            // std::cout<<"DEBUG: create post "<<std::endl;
+//            std::cout<<"DEBUG: create post "<<std::endl;
             author = get_user(std::stoi(author_id));
             if(author != NULL)
                 addPost(author->name(),
@@ -556,23 +555,25 @@ int Network::read_posts(char* fname)
         else
         {
             getline(is, recipient_id);
-            // std::cout<<"DEBUG: 5 "<<recipient_id<<std::endl;
-            // std::cout<<"DEBUG: create DM"<<std::endl;
+//            std::cout<<"DEBUG: 5 "<<recipient_id<<std::endl;
+//            std::cout<<"DEBUG: create DM"<<std::endl;
             author = get_user(std::stoi(author_id));
             if(recipient_id != "\t")
                 recipient = get_user(std::stoi(recipient_id));
             else
                 recipient = NULL;
             if(!(author == NULL || recipient == NULL))
+            {
                 addDM(author->name(),
                       message_text,
                       std::stoi(likes),
                       std::stoi(message_id),
                       recipient->name());
+            }
         }
     }
     is.close();
-    // std::cout<<"DEBUG: end"<<std::endl;
+//    std::cout<<"DEBUG: end"<<std::endl;
     return 0;
 }
 

@@ -93,13 +93,20 @@ std::string User::displayDMs(int who, std::string name, int howmany)
             {
                 --recipient_start;
             }
-            // assume all DM's in messages_ are authored by this User?
-            // I assume "name" is name of "who"
             // std::cout<<"DEBUG: recipient is " << std::stoi(new_line.substr(recipient_start, (new_line.size() - 1) - recipient_start)) << std::endl;
             bool recipient_is_who = (std::stoi(new_line.substr(recipient_start, (new_line.size() - 1) - recipient_start)) == who);
             if(recipient_is_who)
             {
                 result += "From: " + name_ + "\n";
+                result += new_line.substr(0, recipient_start - 1) + "\n\n";
+                ++counter;
+                if(counter == howmany)
+                    break;
+            }
+            bool author_is_who = (messages_[i]->author() == who);
+            if(author_is_who)
+            {
+                result += "From: " + name + "\n";
                 result += new_line.substr(0, recipient_start - 1) + "\n\n";
                 ++counter;
                 if(counter == howmany)

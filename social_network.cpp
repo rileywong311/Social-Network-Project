@@ -79,14 +79,14 @@ void test()
     cout<<"---READ POSTS---"<<endl;
     n2.read_posts("C://cygwin64//home//yelir//SocialNetwork//SocialNetwork//posts-1.txt");
 
-
     cout << "User #1 has "<< n2.get_user(1)->num_messages() <<" messages"<<endl;
-
-    cout << "Display posts from net:\n" << n2.displayPosts(n2.get_user(1)->name(), 4) << endl; // they have no posts (all DMs)
-
-    cout << "Display DMs from net:\n" << n2.displayDM(n2.get_user(1)->name(), n2.get_user(93)->name(), 2)<< endl; // there really are just duplicates
-
-    cout << "Display posts from net:\n" << n2.displayPosts(n2.get_user(2)->name(), 4) << endl;
+    cout << "Display posts from net (not exist):\n" << n2.displayPosts(n2.get_user(1)->name(), 4) << endl;
+    cout << "Display DMs from net:\n" << n2.displayDM(n2.get_user(1)->name(), n2.get_user(93)->name(), 2)<< endl;
+    cout << "User #93 has "<< n2.get_user(93)->num_messages() <<" messages"<<endl;
+    cout << "Display posts from net:\n" << n2.displayPosts(n2.get_user(93)->name(), 4) << endl;
+    cout << "Display posts from user:\n" << n2.get_user(93)->displayPosts(4) << endl;
+    cout << "Display DMs from user:\n" << n2.get_user(93)->displayDMs(79, n2.get_user(79)->name(), 4) << endl;
+    cout << "Display DMs from user:\n" << n2.get_user(93)->displayDMs(1, n2.get_user(1)->name(), 4) << endl;
 
     cout<<"---ADD POSTS TO USER---"<<endl;
     int post_counter(296);
@@ -137,8 +137,8 @@ void test()
 int main()
 {
 
-//    test();
-//    return 0;
+    test();
+    return 0;
 
     Network net;
     net.read_friends("C://cygwin64//home//yelir//SocialNetwork//SocialNetwork//SN-2.txt");
