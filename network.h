@@ -69,16 +69,6 @@ public:
     //       vector of the path to that and also set "to" to the id of them
     std::vector<int> distance_user(int from, int& to, int distance);
 
-    std::string displayPosts(std::string name, int howmany);
-
-    std::string displayDM(std::string from, std::string to, int howmany);
-
-    void addPost(std::string who, std::string message, int likes, int id);
-
-    void addDM(std::string who, std::string message, int likes, int id, std::string recipient);
-
-    int read_posts(char* fname);
-
 private:
 
     std::vector<User *> users_;

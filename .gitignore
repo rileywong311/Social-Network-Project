@@ -4,8 +4,6 @@ SocialNetwork.pro.user
 social_network.o
 user.o
 network.o
-post.o
-directmessage.o
 
 output.exe
 output.exe.stackdump

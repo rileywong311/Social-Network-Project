@@ -1,6 +1,6 @@
 COMP=g++
 
-output: social_network.o network.o user.o post.o directmessage.o
+output: social_network.o network.o user.o
 	$(COMP) $(FLAGS) $^ -o $@
 
 %.o: %.cpp
