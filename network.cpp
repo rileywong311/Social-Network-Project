@@ -86,6 +86,7 @@ int Network::get_id(std::string name)
 // post: initialize network to file
 int Network::read_friends(char* fname)
 {
+    std::cout<<"DEBUG: reading friends"<<std::endl;
     std::ifstream is;
     is.open(fname);
     if(is.fail()){
@@ -111,21 +112,24 @@ int Network::read_friends(char* fname)
     {
         friends_vector.clear();
         std::size_t counter = 1;
-        while(counter < friends.size() - 1) // has -1 because writing file creates space at the end
+        while(counter < friends.size() - 2) // has -1 because writing file creates space at the end
         {
-            temp_friend_id = &friends[counter];
+            char c = friends[counter];
+            temp_friend_id = "";
+            temp_friend_id += c;
             ++counter;
             while(friends[counter] != ' ')
             {
-                temp_friend_id += &friends[counter];
+                c = friends[counter];
+                temp_friend_id += c;
                 ++counter;
             }
             friends_vector.push_back(std::stoi(temp_friend_id));
         }
-
-        users_.push_back(new User(std::stoi(id), &(name[1]), std::stoi(birth), std::stoi(zip), friends_vector));
+        users_.push_back(new User(std::stoi(id), name, std::stoi(birth), std::stoi(zip), friends_vector));
     }
-
+    is.close();
+    std::cout<<"DEBUG: finished reading friends"<<std::endl;
     return 0;
 }
 
@@ -471,7 +475,7 @@ std::string Network::displayDM(std::string from, std::string to, int howmany)
         if(u->name() == from)
         {
             int author_id = get_id(to);
-            if(author_id == NULL)
+            if(author_id == -1)
                 return "";
             return u->displayDMs(author_id, to, howmany);
         }
@@ -505,6 +509,11 @@ void Network::addDM(std::string who, std::string message, int likes, int id, std
             u->addPost(d);
             break;
         }
+}
+
+int Network::read_posts(char* fname)
+{
+    return 0;
 }
 
 

@@ -77,6 +77,8 @@ public:
 
     void addDM(std::string who, std::string message, int likes, int id, std::string recipient);
 
+    int read_posts(char* fname);
+
 private:
 
     std::vector<User *> users_;
