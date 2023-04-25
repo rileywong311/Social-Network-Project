@@ -55,6 +55,7 @@ public:
 
     std::string displayDMs(int who, std::string name, int howmany);
 
+    int num_messages();
 
     int depth, predecessor, score;
     bool visited;

@@ -60,14 +60,17 @@ std::string User::displayPosts(int howmany)
     for(int i = messages_.size() - 1; i >= 0; --i)
     {
         new_line = messages_[i]->displayPost();
+        // std::cout<<"DEBUG: "<<new_line<<std::endl;
         if(std::find(new_line.begin(), new_line.end(), '$') == new_line.end())
         {
+
             result += new_line + "\n\n";
             ++counter;
             if(counter == howmany)
                 break;
         }
     }
+    // std::cout<<"DEBUG: "<<result<<std::endl;
     return result;
 }
 
@@ -105,5 +108,11 @@ std::string User::displayDMs(int who, std::string name, int howmany)
 
         }
     }
+    // std::cout<<"DEBUG: "<<result<<std::endl;
     return result;
+}
+
+int User::num_messages()
+{
+    return messages_.size();
 }

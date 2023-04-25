@@ -1,4 +1,5 @@
 #include "directmessage.h"
+#include <iostream>
 
 std::string DirectMessage::displayPost()
 {

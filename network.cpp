@@ -86,7 +86,7 @@ int Network::get_id(std::string name)
 // post: initialize network to file
 int Network::read_friends(char* fname)
 {
-    std::cout<<"DEBUG: reading friends"<<std::endl;
+
     std::ifstream is;
     is.open(fname);
     if(is.fail()){
@@ -100,8 +100,6 @@ int Network::read_friends(char* fname)
     std::vector<std::size_t> friends_vector;
 
     getline(is, id); // set ID to dummy value to ignore first line
-
-    User temp;
 
     while(getline(is, id) &&
           getline(is, name) &&
@@ -126,10 +124,10 @@ int Network::read_friends(char* fname)
             }
             friends_vector.push_back(std::stoi(temp_friend_id));
         }
+        name = name.substr(1, name.size()-2);
         users_.push_back(new User(std::stoi(id), name, std::stoi(birth), std::stoi(zip), friends_vector));
     }
     is.close();
-    std::cout<<"DEBUG: finished reading friends"<<std::endl;
     return 0;
 }
 
@@ -485,13 +483,14 @@ std::string Network::displayDM(std::string from, std::string to, int howmany)
 void Network::addPost(std::string who, std::string message, int likes, int id)
 {
     int author_id = get_id(who);
-    if(author_id == NULL)
+    if(author_id == -1)
+    {
         return;
-    Post* p = new Post(id, author_id, likes, message);
+    }
     for(auto & u: users_)
         if(u->name() == who)
         {
-            u->addPost(p);
+            u->addPost(new Post(id, author_id, likes, message));
             break;
         }
 }
@@ -500,19 +499,80 @@ void Network::addDM(std::string who, std::string message, int likes, int id, std
 {
     int author_id = get_id(who);
     int recipient_id = get_id(recipient);
-    if(author_id == NULL || recipient_id == NULL)
+    if(author_id == -1 || recipient_id == -1)
+    {
         return;
-    DirectMessage* d = new DirectMessage(id, author_id, likes, message, recipient_id);
+    }
     for(auto & u: users_)
         if(u->name() == who)
         {
-            u->addPost(d);
+            u->addPost(new DirectMessage(id, author_id, likes, message, recipient_id));
+            // std::cout<<"DEBUG: "<< u->displayDMs(recipient_id, "filler", 1) <<std::endl;
             break;
         }
 }
 
 int Network::read_posts(char* fname)
 {
+    // std::cout<<"DEBUG: start"<<std::endl;
+    std::ifstream is;
+    is.open(fname);
+    if(is.fail()){
+        std::cout<<"Input file opening failed!"<<std::endl;
+        return -1;
+    }
+
+    std::string message_id, message_text, author_id, likes, is_DM, recipient_id;
+    User * author, * recipient;
+
+    getline(is, message_id); // set ID to dummy value to ignore first line
+
+    while(getline(is, message_id) &&
+          getline(is, message_text) &&
+          getline(is, author_id) &&
+          getline(is, likes) &&
+          getline(is, is_DM)
+          )
+    {
+        message_text = message_text.substr(1, message_text.size() - 1);
+
+//        std::cout<<"DEBUG: 0 "<<message_id<<std::endl;
+//        std::cout<<"DEBUG: 1 "<<message_text<<std::endl;
+//        std::cout<<"DEBUG: 2 "<<author_id<<std::endl;
+//        std::cout<<"DEBUG: 3 "<<likes<<std::endl;
+//        std::cout<<"DEBUG: 4 "<<is_DM<<std::endl;
+
+
+        if(is_DM.size() <= 1 || is_DM.substr(1) != "DM")
+        {
+            // std::cout<<"DEBUG: create post "<<std::endl;
+            author = get_user(std::stoi(author_id));
+            if(author != NULL)
+                addPost(author->name(),
+                        message_text,
+                        std::stoi(likes),
+                        std::stoi(message_id));
+        }
+        else
+        {
+            getline(is, recipient_id);
+            // std::cout<<"DEBUG: 5 "<<recipient_id<<std::endl;
+            // std::cout<<"DEBUG: create DM"<<std::endl;
+            author = get_user(std::stoi(author_id));
+            if(recipient_id != "\t")
+                recipient = get_user(std::stoi(recipient_id));
+            else
+                recipient = NULL;
+            if(!(author == NULL || recipient == NULL))
+                addDM(author->name(),
+                      message_text,
+                      std::stoi(likes),
+                      std::stoi(message_id),
+                      recipient->name());
+        }
+    }
+    is.close();
+    // std::cout<<"DEBUG: end"<<std::endl;
     return 0;
 }
 

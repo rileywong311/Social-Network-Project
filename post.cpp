@@ -1,4 +1,5 @@
 #include "post.h"
+#include <iostream>
 
 // pre: none
 // post: post constructed
