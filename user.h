@@ -3,12 +3,11 @@
 
 #include <iostream>
 #include <vector>
-#include "post.h"
+using namespace std;
 
 class User
 {
 public:
-
     // pre: none
     // post: default user constructed
     User();
@@ -49,24 +48,11 @@ public:
     //post: print the user's info
     void print();
 
-    void addPost(Post * post);
-
-    std::string displayPosts(int howmany);
-
-    std::string displayDMs(int who, std::string name, int howmany);
-
-    int num_messages();
-
-    int depth, predecessor, score;
-    bool visited;
-
 private:
-
     std::size_t id_;
     std::string name_;
     int year_, zip_;
     std::vector<std::size_t> friends_;
-    std::vector<Post *> messages_;
 };
 
 #endif // USER_H
