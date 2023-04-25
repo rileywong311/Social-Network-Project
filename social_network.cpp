@@ -137,8 +137,8 @@ void test()
 int main()
 {
 
-    test();
-    return 0;
+//    test();
+//    return 0;
 
     Network net;
     net.read_friends("C://cygwin64//home//yelir//SocialNetwork//SocialNetwork//SN-2.txt");

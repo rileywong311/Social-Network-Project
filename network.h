@@ -69,14 +69,24 @@ public:
     //       vector of the path to that and also set "to" to the id of them
     std::vector<int> distance_user(int from, int& to, int distance);
 
+    // pre: none
+    // post: display the recent posts of the user with "name" up to the specified amount
     std::string displayPosts(std::string name, int howmany);
 
+    // pre: none
+    // post: display the recent DMs of the user with name "from" sent to "to" up to the specified amount
     std::string displayDM(std::string from, std::string to, int howmany);
 
+    // pre: none
+    // post: adds post to the author with name "who"
     void addPost(std::string who, std::string message, int likes, int id);
 
+    // pre: none
+    // post: adds DM to the author or recipient with name "who"
     void addDM(std::string who, std::string message, int likes, int id, std::string recipient);
 
+    // pre: none
+    // post: read posts from file
     int read_posts(char* fname);
 
 private:

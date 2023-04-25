@@ -456,7 +456,8 @@ std::vector<int> Network::distance_user(int from, int& to, int distance)
     return path;
 }
 
-
+// pre: none
+// post: display the recent posts of the user with "name" up to the specified amount
 std::string Network::displayPosts(std::string name, int howmany)
 {
     for(auto & u: users_)
@@ -467,6 +468,8 @@ std::string Network::displayPosts(std::string name, int howmany)
     return "";
 }
 
+// pre: none
+// post: display the recent DMs of the user with name "from" sent to "to" up to the specified amount
 std::string Network::displayDM(std::string from, std::string to, int howmany)
 {
     for(auto & u: users_)
@@ -480,6 +483,8 @@ std::string Network::displayDM(std::string from, std::string to, int howmany)
     return "";
 }
 
+// pre: none
+// post: adds post to the author with name "who"
 void Network::addPost(std::string who, std::string message, int likes, int id)
 {
     int author_id = get_id(who);
@@ -495,6 +500,9 @@ void Network::addPost(std::string who, std::string message, int likes, int id)
         }
 }
 
+
+// pre: none
+// post: adds DM to the author or recipient with name "who"
 void Network::addDM(std::string who, std::string message, int likes, int id, std::string recipient)
 {
     int author_id = get_id(who);
@@ -511,6 +519,8 @@ void Network::addDM(std::string who, std::string message, int likes, int id, std
         }
 }
 
+// pre: none
+// post: read posts from file
 int Network::read_posts(char* fname)
 {
 //    std::cout<<"DEBUG: start"<<std::endl;

@@ -51,6 +51,8 @@ void User::addPost(Post * post)
     messages_.push_back(post);
 }
 
+//pre: none
+// post: display the recent posts of the user up to the specified amount
 std::string User::displayPosts(int howmany)
 {
     if(howmany == 0)
@@ -74,7 +76,8 @@ std::string User::displayPosts(int howmany)
     return result;
 }
 
-
+//pre: none
+// post: display the recent DMs of the user up to the specified amount
 std::string User::displayDMs(int who, std::string name, int howmany)
 {
     // std::cout<<"DEBUG: displaying DMs"<<std::endl;
@@ -117,9 +120,4 @@ std::string User::displayDMs(int who, std::string name, int howmany)
     }
     // std::cout<<"DEBUG: "<<result<<std::endl;
     return result;
-}
-
-int User::num_messages()
-{
-    return messages_.size();
 }

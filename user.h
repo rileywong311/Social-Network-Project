@@ -49,13 +49,21 @@ public:
     //post: print the user's info
     void print();
 
+    //pre: none
+    //post: add post user's message list
     void addPost(Post * post);
 
+    //pre: none
+    // post: display the recent posts of the user up to the specified amount
     std::string displayPosts(int howmany);
 
+    //pre: none
+    // post: display the recent DMs of the user up to the specified amount
     std::string displayDMs(int who, std::string name, int howmany);
 
-    int num_messages();
+    //pre: none
+    //post: returns the number of messages
+    int num_messages(){ return messages_.size(); }
 
     int depth, predecessor, score;
     bool visited;
