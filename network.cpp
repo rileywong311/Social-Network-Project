@@ -551,8 +551,10 @@ int Network::read_posts(char* fname)
 //        std::cout<<"DEBUG: 3 "<<likes<<std::endl;
 //        std::cout<<"DEBUG: 4 "<<is_DM<<std::endl;
 
-        // std::cout<<"DEBUG: "<<is_DM[is_DM.size()-3]<<is_DM[is_DM.size()-2]<<std::endl;
-        if(is_DM.size() <= 2 || !(is_DM[is_DM.size()-3] == 'D' && is_DM[is_DM.size()-2] == 'M')) // cygwin has a invisible character at the end of strings, but QT does not
+//        std::cout<<"DEBUG: "<<is_DM[is_DM.size()-3]<<is_DM[is_DM.size()-2]<<std::endl;
+        if(is_DM.size() <= 2 || !((is_DM[is_DM.size()-3] == 'D' && is_DM[is_DM.size()-2] == 'M')
+                                  || (is_DM[is_DM.size()-2] == 'D' && is_DM[is_DM.size()-1] == 'M') )) // cygwin has a invisible character at the end of strings, but QT does not
+        // if(is_DM == "DM")
         {
 //            std::cout<<"DEBUG: create post "<<std::endl;
             author = get_user(std::stoi(author_id));
