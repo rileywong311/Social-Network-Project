@@ -73,8 +73,10 @@ int Network::get_id(std::string name)
     u = NULL;
 
     for(auto e: users_)
+    {
         if(e->name() == name)
             u = e;
+    }
 
     if (u == NULL)
         return -1;
@@ -124,7 +126,7 @@ int Network::read_friends(char* fname)
             }
             friends_vector.push_back(std::stoi(temp_friend_id));
         }
-        name = name.substr(1, name.size()-2);
+        name = name.substr(1, name.size()-1); // needs to be -1 in QT, but -2 in CYGWIN
         users_.push_back(new User(std::stoi(id), name, std::stoi(birth), std::stoi(zip), friends_vector));
     }
     is.close();
