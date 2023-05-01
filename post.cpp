@@ -15,5 +15,5 @@ Post::Post(int id, int author, int likes, std::string message)
 //post: returns message followed by likes on a new line
 std::string Post::displayPost()
 {
-    return message_ + "\n" + std::to_string(likes_);
+    return message_ + "\n" + std::to_string(likes_) + " Likes";
 }
