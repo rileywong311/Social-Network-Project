@@ -1,6 +1,8 @@
 #include "socialnetworkui.h"
 #include "ui_socialnetworkui.h"
 
+
+void update_friends_table(Ui::SocialNetworkUI *ui);
 void show_login(Ui::SocialNetworkUI *ui);
 void hide_login(Ui::SocialNetworkUI *ui);
 void show_user_page(Ui::SocialNetworkUI *ui);
@@ -26,8 +28,20 @@ SocialNetworkUI::SocialNetworkUI(QWidget *parent)
     hide_user_page(ui);
     ui->friendsTable->setColumnCount(1);
     ui->addFriendButton->setVisible(false);
+    ui->profileButton->setVisible(false);
+    ui->pathButton->setVisible(false);
+    ui->suggestButton->setVisible(false);
+    ui->friendsLabel->setVisible(false);
+    ui->friendTextEdit->setVisible(false);
+    ui->suggestFriendWidget->setColumnCount(1);
+    ui->suggestFriendWidget->setVisible(false);
+    ui->friendInfoLabel->setText(QString::fromStdString(""));
     connect(ui->friendsTable, &QTableWidget::cellClicked, this, &SocialNetworkUI::friendClicked);
     connect(ui->addFriendButton, &QPushButton::clicked, this, &SocialNetworkUI::addFriend);
+    connect(ui->profileButton, &QPushButton::clicked, this, &SocialNetworkUI::returnHome);
+    connect(ui->suggestButton, &QPushButton::clicked, this, &SocialNetworkUI::suggestFriend);
+    connect(ui->pathButton, &QPushButton::clicked, this, &SocialNetworkUI::shortestPath);
+    connect(ui->suggestFriendWidget, &QTableWidget::cellClicked, this, &SocialNetworkUI::addFriendClicked);
 }
 
 SocialNetworkUI::~SocialNetworkUI()
@@ -68,14 +82,23 @@ void SocialNetworkUI::friendClicked(int row, int col)
 void SocialNetworkUI::updatePage(std::string user)
 {
     displayUser_ = user;
+    ui->suggestFriendWidget->setVisible(false);
     if(user == loggedInUser_->name())
     {
         ui->usernameLabel->setText(QString::fromStdString("My Profile"));
         ui->addFriendButton->setVisible(false);
+        ui->profileButton->setVisible(false);
+        ui->pathButton->setVisible(true);
+        ui->suggestButton->setVisible(true);
+        ui->friendTextEdit->setVisible(true);
     }
     else
     {
         ui->usernameLabel->setText(QString::fromStdString(user + "'s Profile"));
+        ui->profileButton->setVisible(true);
+        ui->pathButton->setVisible(false);
+        ui->suggestButton->setVisible(false);
+        ui->friendTextEdit->setVisible(false);
         if(std::find(loggedInUser_->friends()->begin(), loggedInUser_->friends()->end(), net_.get_id(user)) == loggedInUser_->friends()->end())
             ui->addFriendButton->setVisible(true);
         else
@@ -91,9 +114,6 @@ void SocialNetworkUI::updatePage(std::string user)
         std::string name = net_.get_user((*friends)[i])->name();
         QString qs_name = QString::fromStdString(name);
         QTableWidgetItem *qtwi = new QTableWidgetItem(qs_name);
-        // std::cout<<"DEBUG: "<<name<<std::endl;
-        qtwi->setText(qs_name);
-        qtwi->setData(0, qs_name);
         ui->friendsTable->setItem(i, 0, qtwi);
     }
 
@@ -109,6 +129,93 @@ void SocialNetworkUI::addFriend()
     updatePage(displayUser_);
 }
 
+void SocialNetworkUI::returnHome()
+{
+    updatePage(loggedInUser_->name());
+}
+
+void SocialNetworkUI::shortestPath()
+{
+    ui->friendInfoLabel->setVisible(true);
+    ui->suggestFriendWidget->setVisible(false);
+    std::string path;
+    int to = net_.get_id(ui->friendTextEdit->toPlainText().toStdString());
+    if(to == -1)
+    {
+        path = "User \"" + ui->friendTextEdit->toPlainText().toStdString() + "\" Does Not Exist!";
+    }
+    else
+    {
+        int from = loggedInUser_->id();
+        std::vector<int> shortest = net_.shortest_path(from, to);
+
+        if(shortest.empty())
+            path = "No Path Exists!";
+        else
+        {
+            path = "Distance: ";
+            path += std::to_string(net_.get_user(shortest[shortest.size()-1])->depth) + '\n';
+            for(std::size_t i = 0; i < shortest.size() - 1; ++i)
+                path += net_.get_user(shortest[i])->name() + " -> ";
+            path += net_.get_user(shortest[shortest.size()-1])->name();
+        }
+    }
+    ui->friendInfoLabel->setText(QString::fromStdString(path));
+}
+
+void SocialNetworkUI::suggestFriend()
+{
+
+    int score;
+    std::vector<int> suggest_result = net_.suggest_friends(net_.get_id(loggedInUser_->name()), score);
+
+    if(score == -1)
+    {
+        ui->friendInfoLabel->setVisible(true);
+        ui->suggestFriendWidget->setVisible(false);
+        ui->friendInfoLabel->setText(QString::fromStdString("No Suggestion!"));
+        return;
+    }
+
+    ui->friendInfoLabel->setVisible(false);
+    ui->suggestFriendWidget->setVisible(true);
+
+    ui->suggestFriendWidget->clear();
+    ui->suggestFriendWidget->setRowCount(suggest_result.size());
+    for(size_t i=0; i<suggest_result.size(); ++i)
+    {
+        std::string name = "Add Friend: ";
+        name += net_.get_user(suggest_result[i])->name();
+        name += " (" + std::to_string(score) + "*)";
+        QString qs_name = QString::fromStdString(name);
+        QTableWidgetItem *qtwi = new QTableWidgetItem(qs_name);
+        qtwi->setData(1, QString::fromStdString(net_.get_user(suggest_result[i])->name()));
+        ui->suggestFriendWidget->setItem(i, 0, qtwi);
+    }
+}
+
+void SocialNetworkUI::addFriendClicked(int row, int col)
+{
+    ui->suggestFriendWidget->setCurrentCell(row, col);
+    QString qs_user_name = ui->suggestFriendWidget->itemAt(row, col)->data(1).toString();
+    std::string user_name = qs_user_name.toStdString();
+    net_.add_connection(user_name, loggedInUser_->name());
+    updatePage(loggedInUser_->name());
+
+    std::vector<std::size_t> *friends = net_.get_user(net_.get_id(loggedInUser_->name()))->friends();
+
+    ui->friendsTable->clear();
+    ui->friendsTable->setRowCount(friends->size());
+    for(size_t i=0; i<friends->size(); ++i)
+    {
+        std::string name = net_.get_user((*friends)[i])->name();
+        QString qs_name = QString::fromStdString(name);
+        QTableWidgetItem *qtwi = new QTableWidgetItem(qs_name);
+        ui->friendsTable->setItem(i, 0, qtwi);
+    }
+
+    suggestFriend();
+}
 
 void show_login(Ui::SocialNetworkUI *ui)
 {
@@ -132,8 +239,6 @@ void show_user_page(Ui::SocialNetworkUI *ui)
     ui->friendsLabel->setVisible(true);
     ui->postsLabel->setVisible(true);
     ui->usernameLabel->setVisible(true);
-    ui->pathButton->setVisible(true);
-    ui->suggestButton->setVisible(true);
 }
 
 void hide_user_page(Ui::SocialNetworkUI *ui)
@@ -142,6 +247,4 @@ void hide_user_page(Ui::SocialNetworkUI *ui)
     ui->friendsTable->setVisible(false);
     ui->postsLabel->setVisible(false);
     ui->usernameLabel->setVisible(false);
-    ui->pathButton->setVisible(false);
-    ui->suggestButton->setVisible(false);
 }

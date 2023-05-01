@@ -28,6 +28,10 @@ private slots:
     void friendClicked(int row, int col);
     void updatePage(std::string user);
     void addFriend();
+    void returnHome();
+    void shortestPath();
+    void suggestFriend();
+    void addFriendClicked(int row, int col);
 
 };
 #endif // SOCIALNETWORKUI_H
