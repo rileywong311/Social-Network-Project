@@ -1,4 +1,4 @@
-#include "socialnetworkui.h"
+ #include "socialnetworkui.h"
 #include "ui_socialnetworkui.h"
 
 
@@ -36,12 +36,15 @@ SocialNetworkUI::SocialNetworkUI(QWidget *parent)
     ui->suggestFriendWidget->setColumnCount(1);
     ui->suggestFriendWidget->setVisible(false);
     ui->friendInfoLabel->setText(QString::fromStdString(""));
+    ui->backButton->setVisible(false);
     connect(ui->friendsTable, &QTableWidget::cellClicked, this, &SocialNetworkUI::friendClicked);
     connect(ui->addFriendButton, &QPushButton::clicked, this, &SocialNetworkUI::addFriend);
     connect(ui->profileButton, &QPushButton::clicked, this, &SocialNetworkUI::returnHome);
     connect(ui->suggestButton, &QPushButton::clicked, this, &SocialNetworkUI::suggestFriend);
     connect(ui->pathButton, &QPushButton::clicked, this, &SocialNetworkUI::shortestPath);
     connect(ui->suggestFriendWidget, &QTableWidget::cellClicked, this, &SocialNetworkUI::addFriendClicked);
+    connect(ui->backButton, &QPushButton::clicked, this, &SocialNetworkUI::undoBreadcrumb);
+    connect(ui->logOutButton, &QPushButton::clicked, this, &SocialNetworkUI::logOut);
 }
 
 SocialNetworkUI::~SocialNetworkUI()
@@ -76,11 +79,16 @@ void SocialNetworkUI::friendClicked(int row, int col)
     QString qs_user_name = ui->friendsTable->currentItem()->text();
     //QString qs_user_name = ui->friendsTable->itemAt(row, col)->data(0).toString();
     std::string user_name = qs_user_name.toStdString();
+    addBreadcrumb(user_name);
     updatePage(user_name);
 }
 
 void SocialNetworkUI::updatePage(std::string user)
 {
+    if(hasBreadcrumbs())
+        ui->backButton->setVisible(true);
+    else
+        ui->backButton->setVisible(false);
     displayUser_ = user;
     ui->suggestFriendWidget->setVisible(false);
     if(user == loggedInUser_->name())
@@ -131,6 +139,7 @@ void SocialNetworkUI::addFriend()
 
 void SocialNetworkUI::returnHome()
 {
+    addBreadcrumb(loggedInUser_->name());
     updatePage(loggedInUser_->name());
 }
 
@@ -217,12 +226,51 @@ void SocialNetworkUI::addFriendClicked(int row, int col)
     suggestFriend();
 }
 
+void SocialNetworkUI::addBreadcrumb(std::string data)
+{
+    breadcrumbs_.push(data);
+}
+
+bool SocialNetworkUI::hasBreadcrumbs() const
+{
+    return !breadcrumbs_.empty();
+}
+
+void SocialNetworkUI::undoBreadcrumb()
+{
+    if(hasBreadcrumbs())
+        breadcrumbs_.pop();
+    if(hasBreadcrumbs())
+        updatePage(breadcrumbs_.top());
+    else
+        updatePage(loggedInUser_->name());
+}
+
+void SocialNetworkUI::logOut()
+{
+    while(hasBreadcrumbs())
+        breadcrumbs_.pop();
+    loggedInUser_ = nullptr;
+    displayUser_ = std::string();
+    hide_user_page(ui);
+    ui->addFriendButton->setVisible(false);
+    ui->profileButton->setVisible(false);
+    ui->pathButton->setVisible(false);
+    ui->suggestButton->setVisible(false);
+    ui->friendsLabel->setVisible(false);
+    ui->friendTextEdit->setVisible(false);
+    ui->suggestFriendWidget->setVisible(false);
+    ui->backButton->setVisible(false);
+    show_login(ui);
+}
+
 void show_login(Ui::SocialNetworkUI *ui)
 {
     ui->loginTextEdit->setVisible(true);
     ui->loginButton->setVisible(true);
     ui->loginLabel->setVisible(true);
     ui->loginFailLabel->setVisible(false);
+    ui->logOutButton->setVisible(false);
 }
 
 void hide_login(Ui::SocialNetworkUI *ui)
@@ -231,6 +279,7 @@ void hide_login(Ui::SocialNetworkUI *ui)
     ui->loginButton->setVisible(false);
     ui->loginLabel->setVisible(false);
     ui->loginFailLabel->setVisible(false);
+    ui->logOutButton->setVisible(true);
 }
 
 void show_user_page(Ui::SocialNetworkUI *ui)
@@ -248,3 +297,4 @@ void hide_user_page(Ui::SocialNetworkUI *ui)
     ui->postsLabel->setVisible(false);
     ui->usernameLabel->setVisible(false);
 }
+
