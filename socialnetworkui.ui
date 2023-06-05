@@ -306,6 +306,42 @@
      <bool>false</bool>
     </attribute>
    </widget>
+   <widget class="QPushButton" name="backButton">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>10</y>
+      <width>80</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="logOutButton">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>10</y>
+      <width>80</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Log Out</string>
+    </property>
+   </widget>
    <zorder>postsLabel</zorder>
    <zorder>friendInfoLabel</zorder>
    <zorder>loginTextEdit</zorder>
@@ -321,6 +357,8 @@
    <zorder>profileButton</zorder>
    <zorder>friendTextEdit</zorder>
    <zorder>suggestFriendWidget</zorder>
+   <zorder>backButton</zorder>
+   <zorder>logOutButton</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
